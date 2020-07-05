@@ -71,7 +71,7 @@ public class DepartmentService {
 	sc.close();
 	}
 	
-	//método para continuar no no programa do Department
+	//método para continuar no programa do Department
 			public static  void ContinueDepartment() {
 				System.out.println("Deseja continuar? (Y/n)");
 				char esc = sc.next().charAt(0);

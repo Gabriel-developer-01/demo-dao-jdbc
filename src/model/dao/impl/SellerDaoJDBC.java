@@ -30,7 +30,9 @@ public class SellerDaoJDBC implements SellerDao {
 		PreparedStatement st = null;
 
 		try {
-			st = conn.prepareStatement("INSERT INTO seller " + "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
+			st = conn.prepareStatement(
+					"INSERT INTO seller " 
+					+ "(Name, Email, BirthDate, BaseSalary, DepartmentId) "
 					+ "VALUES " + "(?, ?, ?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
 
 			st.setString(1, obj.getName());
@@ -66,8 +68,10 @@ public class SellerDaoJDBC implements SellerDao {
 
 		try {
 
-			st = conn.prepareStatement("UPDATE seller "
-					+ "SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ? " + "WHERE Id = ?");
+			st = conn.prepareStatement(
+					"UPDATE seller "
+					+ "SET Name = ?, Email = ?, BirthDate = ?, BaseSalary = ?, DepartmentId = ? " 
+					+ "WHERE Id = ?");
 
 			st.setString(1, obj.getName());
 			st.setString(2, obj.getEmail());
@@ -98,7 +102,6 @@ public class SellerDaoJDBC implements SellerDao {
 			
 			st.setInt(1, id);
 			
-			
 			int rows = st.executeUpdate();
 			if(rows == 0) {
 				throw new DbException("ID NULL");
@@ -114,14 +117,19 @@ public class SellerDaoJDBC implements SellerDao {
 
 	@Override
 	public Seller findById(Integer id) {
+		
 		PreparedStatement st = null;
 		ResultSet rs = null;
+		
 		try {
 			st = conn.prepareStatement(
-					"SELECT seller.*,department.Name as DepName " + "FROM seller INNER JOIN department "
-							+ "ON seller.DepartmentId = department.Id " + "WHERE seller.Id = ?");
+							"SELECT seller.*,department.Name as DepName "
+							+ "FROM seller INNER JOIN department "
+							+ "ON seller.DepartmentId = department.Id " 
+							+ "WHERE seller.Id = ?");
 
 			st.setInt(1, id);
+			
 			rs = st.executeQuery();
 			if (rs.next()) {
 				Department dep = instantiateDepartment(rs);
@@ -165,14 +173,27 @@ public class SellerDaoJDBC implements SellerDao {
 		try {
 
 			st = conn.prepareStatement(
-					"SELECT seller.*,department.Name as DepName " + "FROM seller INNER JOIN department "
-							+ "ON seller.DepartmentId = department.Id " + "ORDER BY Name");
+							"SELECT seller.*,department.Name as DepName " 
+							+ "FROM seller INNER JOIN department "
+							+ "ON seller.DepartmentId = department.Id "
+							+ "ORDER BY Name");
 
 			rs = st.executeQuery();
 
 			List<Seller> list = new ArrayList<>();
 			Map<Integer, Department> map = new HashMap<>();
-
+			/* o map irá garantir que apenas um objeto departament seja instanciado para garantir
+			  a relação um para muitos. No caso o while enquanto for válido irá atribuir
+			  sempre o mesmo objeto department presente na chave de valor que será igual ao id de department.
+			  O primeiro laço map irá retornar um valor nulo porque nenhum um valor foi inserido. Em seguida
+			  o obj Department torna condição de nulo valida. Então um objeto Department é instânciado através
+			  do retorno do método instantieteDepartment(rs) que recebe o resultset atual e a partir dele 
+			  retorna um um objeto department e em seguida o guarda na estrutura map, como chave
+			  recebe o id do departmento e como valor o objeto department. Em seguida, um objeto seller é retornado
+			  a partir do método instantieteSeller(rs, dep) que recebe um resultSet e o objeto departamento (que será
+			  sempre um mesmo objeto Department). Por fim o objeto Seller é adicionado a lista ao fim do loop a lista
+			  é retornada. 
+			 */
 			while (rs.next()) {
 
 				Department dep = map.get(rs.getInt("DepartmentId"));
@@ -204,8 +225,11 @@ public class SellerDaoJDBC implements SellerDao {
 		try {
 
 			st = conn.prepareStatement(
-					"SELECT seller.*,department.Name as DepName " + "FROM seller INNER JOIN department "
-							+ "ON seller.DepartmentId = department.Id " + "WHERE DepartmentId = ? " + "ORDER BY Name");
+							"SELECT seller.*,department.Name as DepName " 
+							+ "FROM seller INNER JOIN department "
+							+ "ON seller.DepartmentId = department.Id "
+							+ "WHERE DepartmentId = ? "
+							+ "ORDER BY Name");
 
 			st.setInt(1, department.getId());
 

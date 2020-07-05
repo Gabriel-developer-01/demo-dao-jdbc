@@ -89,7 +89,6 @@ public class DepartmentDaoJDBC implements DepartmentDao{
 			st = conn.prepareStatement("DELETE FROM department WHERE id = ?");
 			
 			st.setInt(1, id);
-			
 			int rowsAffected = st.executeUpdate();
 			
 			if(rowsAffected == 0) {
@@ -111,10 +110,9 @@ public class DepartmentDaoJDBC implements DepartmentDao{
 		
 		try {
 			
-			st = conn.prepareStatement("SELECT * FROM department WHERE Id = ?");
+			st = conn.prepareStatement("SELECT * FROM department WHERE id = ?");
 			
 			st.setInt(1, id);
-			
 			rs = st.executeQuery();
 			
 			if(rs.next()) {
@@ -134,7 +132,7 @@ public class DepartmentDaoJDBC implements DepartmentDao{
 
 	private Department instantiateDepartment(ResultSet rs) throws SQLException {
 		Department obj = new Department();
-		obj.setId(rs.getInt("Id"));
+		obj.setId(rs.getInt("id"));
 		obj.setName(rs.getString("Name"));
 		return obj;
 	}
